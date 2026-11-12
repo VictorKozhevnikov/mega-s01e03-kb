@@ -1,0 +1,60 @@
+---
+layout: runbook
+title: '#4471 split · three problems, not one'
+owner: VictorKozhevnikov
+status: open
+reviewed: 2026-11-12
+signature: VictorKozhevnikov
+---
+
+<script>
+  import ProblemTable from '#lib/kb/ProblemTable.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+
+  const repo = 'https://github.com/VictorKozhevnikov/mega-s01e03-kb/issues';
+  const tickets = {
+    parser: { href: `${repo}/1`, label: 'issue #1', what: 'shared parser reads dates month first' },
+    hint: { href: `${repo}/2`, label: 'issue #2', what: 'booking-v3 form hints MM/DD/YYYY to day-first tenants' },
+    'one-day': { href: `${repo}/3`, label: 'issue #3', what: 'dates move by exactly one day' },
+  };
+</script>
+
+The [#4471 page](/kb/incidents/4471) says one issue, one fix queued. The reports say otherwise.
+They describe three problems. One fix to the parser closes only the first one.
+
+<Callout kind="warn">
+#4471 is not one bug. Each problem below has its own ticket and its own fix.
+</Callout>
+
+## What the reports show
+
+<ProblemTable ticket={4471} {tickets} />
+
+## How each report is placed
+
+The rule is in `#lib/kb/problems.ts`, built on `causes.ts`. The table runs it on every build,
+so the counts follow the export.
+
+1. **Repeats out.** The ticket export comes in overlapping pages. One id, one report.
+2. **One-day moves first.** A report where the date moved by exactly one day (Tuesday became Monday,
+   one city got Tuesday and another got Monday) is in `desk-notes.json`. Swapping day and month
+   can't do that. It is a third problem, most likely a time zone or midnight boundary, and it
+   gets its own ticket instead of a footnote.
+3. **Then tenant and channel.** All our tenants write the day first. A report that came through
+   a **booking-v3 form** is `hint`: that form prints `MM/DD/YYYY` under the date field, people
+   type what it says, and the form reads it day first. Every other report (app, email, booking-v2
+   form) is `parser`: the shared parser reads the date month first.
+4. **Not intake's tag.** `meta.intakeTag` is a guess from the reporter's browser. It is wrong
+   often enough (see the note under the table) that counting by it gives the wrong split.
+
+## What changes for the desk
+
+- Fixing the parser closes `parser` only. `hint` needs a change to the booking-v3 form's hint,
+  and `one-day` needs someone to look at time zones.
+- Merging on subject ([decision 0001](/kb/decisions/0001-dedupe-by-subject)) didn't hide this:
+  #4471 holds many subject lines. Merging by "it's about dates" did. A new decision record
+  should replace 0001; this page doesn't edit it.
+- New reports keep coming. File them by the rule above, not into #4471.
+
+<RenderStamp {signature} />
