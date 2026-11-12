@@ -31,6 +31,22 @@ They describe three problems. One fix to the parser closes only the first one.
 
 <ProblemTable ticket={4471} {tickets} />
 
+## Where each problem stands
+
+Engineering closed #4471 on 5 October:
+
+- **parser:** fixed (`fix(dates): parse dd/mm for eu locales`). [Issue #1](https://github.com/VictorKozhevnikov/mega-s01e03-kb/issues/1) is closed.
+  Check the fix after deploy. It names *eu locales*, but two of our day-first tenants write
+  `en-GB` and `en-IE`, and `en-GB` is not an EU locale.
+- **hint:** won't fix, because the booking-v3 form is retired. [Issue #2](https://github.com/VictorKozhevnikov/mega-s01e03-kb/issues/2) is closed as not planned.
+  These reports end only when every booking-v3 tenant is off the form.
+- **one-day:** not in the update, and a day/month fix can't move a date by one day.
+  [Issue #3](https://github.com/VictorKozhevnikov/mega-s01e03-kb/issues/3) stays **open**.
+
+<Callout kind="warn">
+#4471 is closed, but the one-day problem is not fixed. Don't merge new one-day reports into #4471.
+</Callout>
+
 ## How each report is placed
 
 The rule is in `#lib/kb/problems.ts`, built on `causes.ts`. The table runs it on every build,
