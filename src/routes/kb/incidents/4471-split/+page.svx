@@ -4,7 +4,7 @@ title: '#4471 split · three problems, not one'
 owner: VictorKozhevnikov
 status: open
 reviewed: 2026-11-12
-signature: VictorKozhevnikov
+signature: 'v1.eyJzdWIiOiIzNTk1IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTQ0OTk3MzcsImV4cCI6MTc5NDU4NjEzN30.VnJutWn9nBhWnH0qqpCEjSSzWRqVATQLxoVRwQieAiw'
 ---
 
 <script>
