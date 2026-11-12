@@ -37,14 +37,16 @@ The rule is in `#lib/kb/problems.ts`, built on `causes.ts`. The table runs it on
 so the counts follow the export.
 
 1. **Repeats out.** The ticket export comes in overlapping pages. One id, one report.
-2. **One-day moves first.** A report where the date moved by exactly one day (Tuesday became Monday,
-   one city got Tuesday and another got Monday) is in `desk-notes.json`. Swapping day and month
-   can't do that. It is a third problem, most likely a time zone or midnight boundary, and it
-   gets its own ticket instead of a footnote.
-3. **Then tenant and channel.** All our tenants write the day first. A report that came through
+2. **Tenant and channel.** All our tenants write the day first. A report that came through
    a **booking-v3 form** is `hint`: that form prints `MM/DD/YYYY` under the date field, people
    type what it says, and the form reads it day first. Every other report (app, email, booking-v2
-   form) is `parser`: the shared parser reads the date month first.
+   form) is `parser`: the shared parser reads the date month first. This is the desk's own count,
+   the same one the [#4471 page](/kb/incidents/4471) shows.
+3. **One-day moves.** A report where the date moved by exactly one day (Tuesday became Monday,
+   one city got Tuesday and another got Monday) is in `desk-notes.json`. Swapping day and month
+   can't do that. It is a third problem, most likely a time zone or midnight boundary, so it
+   gets its own row and ticket instead of a footnote. The desk still counts these reports under
+   the cause they are filed by, so the rows add up to more than the total.
 4. **Not intake's tag.** `meta.intakeTag` is a guess from the reporter's browser. It is wrong
    often enough (see the note under the table) that counting by it gives the wrong split.
 

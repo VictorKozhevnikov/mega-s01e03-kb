@@ -1,15 +1,16 @@
 // Splits a merged ticket into the problems its reports actually describe.
 // Built on causes.ts (tenant + channel decide parser vs hint) and desk-notes.json (reports the desk
-// read as a one-day move). A one-day move cannot come from swapping day and month, so it is its own
-// problem, not a footnote under `parser`.
+// read as a one-day move). Counts follow the desk's own view (CauseTable): every report sits under its
+// cause by tenant and channel. A one-day move cannot come from swapping day and month, so it also gets
+// a row and a ticket of its own; those reports stay counted under the cause they are filed by.
 import { causeOf, uniqueById, type Report, type Tenant } from '#lib/kb/causes';
 
 export type Problem = 'parser' | 'hint' | 'one-day' | 'unplaced';
 export const PROBLEMS: readonly Problem[] = ['parser', 'hint', 'one-day', 'unplaced'];
 
-export function problemOf(r: Report, t: Tenant | undefined, oneDayMove: readonly string[]): Problem {
-  if (oneDayMove.includes(r.id)) return 'one-day';
-  return causeOf(r, t) ?? 'unplaced';
+export function problemsOf(r: Report, t: Tenant | undefined, oneDayMove: readonly string[]): Problem[] {
+  const filed: Problem = causeOf(r, t) ?? 'unplaced';
+  return oneDayMove.includes(r.id) ? [filed, 'one-day'] : [filed];
 }
 
 export type ProblemGroup = {
@@ -30,8 +31,7 @@ export function splitTicket(
   const merged = uniqueById(all).filter((r) => r.mergedInto === ticket);
   const by = new Map<Problem, Report[]>();
   for (const r of merged) {
-    const p = problemOf(r, tenantOf(r), oneDayMove);
-    by.set(p, [...(by.get(p) ?? []), r]);
+    for (const p of problemsOf(r, tenantOf(r), oneDayMove)) by.set(p, [...(by.get(p) ?? []), r]);
   }
   const groups = PROBLEMS.flatMap((problem) => {
     const rs = by.get(problem);

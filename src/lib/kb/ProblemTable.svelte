@@ -33,7 +33,7 @@
       {@const t = tickets[g.problem]}
       <tr class:open={!t}>
         <td><code>{g.problem}</code>{#if t}<br /><span class="what">{t.what}</span>{/if}</td>
-        <td><strong>{g.reports.length}</strong></td>
+        <td><strong>{g.reports.length}</strong>{#if g.problem === 'one-day'}<br /><span class="what">also counted under the cause they are filed by</span>{/if}</td>
         <td class="muted">{chan(g.channels)}</td>
         <td>{g.tenants}</td>
         <td class="muted">{g.firstSeen} → {g.lastSeen}</td>
